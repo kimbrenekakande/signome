@@ -1,0 +1,36 @@
+experiment:
+  -Overview:
+    Location of subjects : Country from which study subjects were recruited
+    Host Species: Species from which microbiome was sampled. Contact us to have more species added. (scientific name)
+    Body Site : Anatomical site where microbial samples were extracted from according to the Uber Anatomy Ontology
+    Condition : The experimental condition / phenotype studied according to the Experimental Factor Ontology
+    Group 0 name : Corresponds to the control (unexposed) group for case-control studies
+    Group 1 name : Corresponds to the case (exposed) group for case-control studies
+    Group 1 Definition : Diagnostic criteria applied to define the specific condition / phenotype represented in the case (exposed) group
+    Group 0 sample size : Number of subjects in the control (unexposed) group
+    Group 1 sample size : Number of subjects in the case (exposed) group
+    Antibiotics exclusion: Number of days without antibiotics usage (if applicable) and other antibiotics-related criteria used to exclude participants (if any)
+
+  -Lab Analysis :
+    Sequencing Type : Experimental technique used for quantifying microbial abundance
+    Sequencing platform : Manufacturer and experimental platform used for quantifying microbial abundance
+  
+  -Statistical Analysis :
+    Data transformation : Data transformation applied to microbial abundance measurements prior to differential abundance testing (if any).
+    Statistical Test : Statistical test or computational tool used for differential abundance testing
+    Significance Threshold : p-value or FDR threshold used for differential abundance testing (if any)
+    MHT correction : Have statistical tests be corrected for multiple hypothesis testing (MHT)?
+    LDA Score above : Threshold for the linear discriminant analysis (LDA) score for studies using the popular LEfSe tool
+    Matched on : Factors on which subjects have been matched on in a case-control study
+    Confounders controlled for : Confounding factors that have been accounted for by stratification or model adjustment
+    Adjusted p-value : p-value or FDR threshold used for adjusted p-value (if any)
+
+  -Alpha Diversity :
+    Pielou : Quantifies how equal the community is numerically options = (increased, decreased, unchanged)
+    Shannon : Estimator of species richness and species evenness(more weight on species richness) options = (increased, decreased, unchanged)
+    Chao1 : Abundance-based estimator of species richness options = (increased, decreased, unchanged)
+    Simpson : Estimator of species richness and species evenness(more weight on species evenness) options = (increased, decreased, unchanged)
+    Inverse Simpson : Modification of Simpsons index D as 1/D to obtain high values in datasets of high diversity and vice versa options = (increased, decreased, unchanged)
+    Richness : Number of species options = (increased, decreased, unchanged)
+    Faith : Phylogenetic diversity, takes into account phylogenetic distance of all taxa identified in a sample options = (increased, decreased, unchanged)
+    
