@@ -10,18 +10,18 @@ agents = AgentsAll()
 tasks = TasksAll()
 
 #agents 
-scraper_agent = agents.scraper()
+reader_agent = agents.Study_reader()
 microbiologist= agents.microbiologist()
 
 # Create tasks
-scraper_task = tasks.scraper_task(scraper_agent)
-study_task = tasks.study_task(microbiologist, scraper_task)
+reader_task = tasks.reader_task(reader_agent)
+study_task = tasks.study_task(microbiologist, reader_task)
 
 #crew
 crew = Crew(
     llm=llm,
-    agents=[microbiologist],
-    tasks=[study_task],
+    agents=[reader_agent, microbiologist],
+    tasks=[reader_task, study_task],
     verbose=True,
 )
 

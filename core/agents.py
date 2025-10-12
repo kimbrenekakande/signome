@@ -1,38 +1,49 @@
 from crewai import Agent
 from .model import llm 
-from crewai_tools import ScrapeWebsiteTool
+from typing import Type
+from tools.pypdf import PDFReaderTool
 
-scraper = ScrapeWebsiteTool()
+
+reader = PDFReaderTool()
+
 
 class AgentsAll():
-    def scraper(self):
+    def Study_reader(self):
         return Agent(
-        role="Scraper",
-        goal="Scrape data from {url}",
+        role="Study Reader",
+        goal="Extract complete content from the provided study {file} using your file reading tool",
         backstory="""
-        You are a scraper agent that is used to scrape microbiome study data from a website.
+        You are an efficient study reading specialist. When given a PDF file, you use your 
+        PDF Reader tool to extract all content from the file. You never ask for clarification 
+        about the {file} - you use the file provided in your task. You extract all text, including 
+        methodology, results, tables, and figures from scientific papers.
         """,
-        allow_delegation=True,
-        verbose=True,
-        tools=[scraper],
+        allow_delegation=False,
+        tools=[reader],
         llm=llm,
     )
         
     def microbiologist(self):
         return Agent(
-        role="Microbiologist",
-        goal="Conduct thorough research on given topics",
+        role="Microbiologist Data Curator",
+        goal="Extract and structure experimental data from microbiome studies for BugSigDB database entries of this {file}",
         backstory="""
-        You are a highly experienced microbiologist with a diverse background spanning multiple institutions and countries. 
-        You have expertise in wet-lab and dry-lab methods, and have worked at the University of Novi Sad (Serbia), 
-        University of Glasgow (UK), University of Porto (Portugal), Fudan University (China), and University of Trento (Italy). 
-        Your research has focused on a range of microbiome topics, including the role of microbes in human health and disease, 
-        the effects of antibiotics on the microbiome, and the development of new methods for microbiome analysis. 
-        You are currently working at bugsigdb, where your expertise is used to curate microbiome study data into bugsigdb.
+        You are a highly experienced microbiologist and data curator working at BugSigDB. You have expertise 
+        spanning multiple institutions including University of Novi Sad (Serbia), University of Glasgow (UK), 
+        University of Porto (Portugal), Fudan University (China), and University of Trento (Italy).
+        
+        Your specialty is reading microbiome research papers and extracting key experimental metadata in a 
+        structured format. You understand:
+        - Study design and experimental groups
+        - Sequencing methodologies (16S rRNA, shotgun metagenomics, etc.)
+        - Statistical analyses used in microbiome research
+        - Alpha diversity metrics (Shannon, Chao1, Simpson, etc.)
+        - How to identify the main experiments in a paper
+        
+        You are meticulous about extracting accurate data and always provide complete structured output 
+        in the required format.
         """,
-        allow_delegation=True,
-        verbose=True,
-        tools=[scraper],
+        allow_delegation=False,
         llm=llm,
     )
 
