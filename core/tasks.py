@@ -1,12 +1,11 @@
 from crewai import Task
-from knowledge.experiment import Experiment
-
-
+from crewai.tools import tool
+from crewai_tools import FileReadTool
 class TasksAll():
-    def reader_task(self, agent):
+    def scrape_task(self, agent):
         return Task(
         description = """
-        Use the file reading tool to scrape the complete content from the study {file}
+        Use crawl4ai tool to scrape the complete content from the study {url}
         
         IMPORTANT: Extract all text content from the microbiome study including:
         - Study methodology
@@ -15,27 +14,43 @@ class TasksAll():
         - Statistical analyses
         - All tables and figures descriptions
         
-        This is a microbiome research paper, so capture all relevant scientific data.
+        This is a microbiome research paper, so capture all the data to avoid missing any important information.
+        
+        After using the tool, output the ENTIRE scraped content that the tool returned, not a summary.
         """, 
+        
         expected_output="""
-        Complete text content scraped from the provided study {file} including:
-        - Full study methodology section
-        - All experimental results
-        - Statistical test information
-        - Sample collection and processing details
-        - All data presented in tables and figures
+        The complete full-text content extracted from {url} in Markdown format.
+        Output the entire scraped study content word-for-word as returned by the crawl4ai tool.
+        Do not summarize - include all sections, paragraphs, tables, and figures from the study.
         """,
         agent=agent,
-        # output_file="output/scraped_study.txt",
+        verbose=False,
     )
+        
+    def prune_task(self,agent):
+        return Task(
+            description="""
+            prune the study {raw} study. Remove all the none study related parts of the page such as page navigation, interaction links, footer, action buttons,etc.
+            strip away all the parts of the page and leave only the microbiome study content. All study content should be preserved.
+            """,
+            expected_output="""
+            The whole study in its entirety with all the original study preserved. but without any other parts of the page such as page navigation, interaction links, footer, action buttons etc.
+            no part of the page should be left in the study. all study content should be preserved.
+            """,
+            agent=agent,
+            verbose=False,
+            tools=[FileReadTool()],
+            output_file="output/prune.md"
+        )
     
-    def study_task(self, agent, reader_task):
+    def study_task(self, agent):
         return Task(
         description = """
-        Analyze the scraped microbiome study content and extract structured experimental data for BugSigDB.
+        Analyze the pruned microbiome study {raw} and extract structured experimental data for BugSigDB.
         
         Your task:
-        1. Read the scraped study content from the previous task
+        1. Read the pruned study content from the previous task
         2. Identify all main experiments comparing different groups (e.g., disease vs. control, treatment vs. placebo)
         3. For EACH experiment, extract the following information:
             - Study location and host species
@@ -57,7 +72,7 @@ class TasksAll():
         - For diversity metrics: "unchanged" if not reported
         """,
         agent=agent,
-        context=[reader_task],
+        tool=FileReadTool(),
         expected_output="""
         A list of Experiment objects in JSON format, each containing the following fields:
         - location: Location of subjects 
@@ -85,5 +100,6 @@ class TasksAll():
         - richness: Richness change ("increased", "decreased", or "unchanged")
         - faith: Faith's PD change ("increased", "decreased", or "unchanged")
         """,
-        output_file="output/experiments.json",
+        output_file="output/bugsigdb.json",
+        verbose=True,
     )

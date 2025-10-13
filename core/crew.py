@@ -9,19 +9,19 @@ from .model import llm
 agents = AgentsAll()
 tasks = TasksAll()
 
-#agents 
-reader_agent = agents.Study_reader()
+#agents
+scraper = agents.scraper()
+prunner = agents.prunner()
 microbiologist= agents.microbiologist()
 
 # Create tasks
-reader_task = tasks.reader_task(reader_agent)
-study_task = tasks.study_task(microbiologist, reader_task)
+scrape_task = tasks.scrape_task(scraper)
+prune_task = tasks.prune_task(prunner)
+study_task = tasks.study_task(microbiologist)
 
 #crew
 crew = Crew(
     llm=llm,
-    agents=[reader_agent, microbiologist],
-    tasks=[reader_task, study_task],
-    verbose=True,
+    agents=[scraper,microbiologist],
+    tasks=[scrape_task,study_task],
 )
-

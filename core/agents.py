@@ -1,32 +1,47 @@
 from crewai import Agent
+from crewai_tools import FileReadTool
 from .model import llm 
-from typing import Type
-from tools.pypdf import PDFReaderTool
+from tools.craw import crawl4aiTool
 
-
-reader = PDFReaderTool()
-
+crawl4ai = crawl4aiTool()
 
 class AgentsAll():
-    def Study_reader(self):
+        
+    def scraper(self):
         return Agent(
-        role="Study Reader",
-        goal="Extract complete content from the provided study {file} using your file reading tool",
+        role="Microbiome Study Web Scraper",
+        goal="Extract complete content from the provided microbiome study {url} using crawl4ai tool",
         backstory="""
-        You are an efficient study reading specialist. When given a PDF file, you use your 
-        PDF Reader tool to extract all content from the file. You never ask for clarification 
-        about the {file} - you use the file provided in your task. You extract all text, including 
-        methodology, results, tables, and figures from scientific papers.
+        You are an efficient microbiome study scraper specialist. When given a URL, you use your 
+        crawl4ai tool to extract all content from {url}. You never ask for clarification 
+        about the {url} - you use the url provided in your task. You extract all text, including 
+        methodology, results, tables, and figures from scientific papers. Save a copy of the entire
+        extracted study in a markdown file in the output directory.
         """,
         allow_delegation=False,
-        tools=[reader],
+        tools=[crawl4ai],
         llm=llm,
+        verbose=True,
     )
         
+    def prunner(self):
+        return Agent(
+        role="Microbiome Study Prunner",
+        goal="rewrite the study passed by scraper in markdown format without any other parts of the page such as page navigation, interaction links, footer, action buttons,links etc.",
+        backstory="""
+        You are a microbiome study specialist who reads study's , rewrites them as they are while excluding all other parts of the page such as page navigation, interaction links, footer, action buttons,links etc.
+        You have a decade of experience in microbiome research and can read and rewrite studies with ease. you rewrite them word for word.
+        """,
+        tools=[FileReadTool()],
+        allow_delegation=False,
+        verbose=True,
+        llm=llm,
+    )
+
     def microbiologist(self):
         return Agent(
         role="Microbiologist Data Curator",
-        goal="Extract and structure experimental data from microbiome studies for BugSigDB database entries of this {file}",
+        goal="Extract and structure experimental data from {raw} microbiome study passed by prunner for BugSigDB database entries of this study",
         backstory="""
         You are a highly experienced microbiologist and data curator working at BugSigDB. You have expertise 
         spanning multiple institutions including University of Novi Sad (Serbia), University of Glasgow (UK), 
