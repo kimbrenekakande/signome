@@ -26,31 +26,48 @@ class TasksAll():
         """,
         agent=agent,
         verbose=False,
+        output_file="output/raw_task.md"
     )
         
-    def prune_task(self,agent):
+    def image_task(self, agent):
+        return Task(
+        description = """
+        Analyze the {image} url and extract the relevant information for BugSigDB database entries of this study. 
+        """,
+        expected_output="""
+        the entire content of the images provided in markdown format.
+        dont forget to include the title to of each image before the content of the image/figure.
+        """,
+        agent=agent,
+        verbose=False,
+        tool=FileReadTool(),
+        output_file="output/visual.md"
+    )
+        
+    def clean_task(self,agent):
         return Task(
             description="""
-            prune the study {raw} study. Remove all the none study related parts of the page such as page navigation, interaction links, footer, action buttons,etc.
+            clean the {raw} study.
+            rewrite the study as it is word-for-word while removing all the none study related parts of the page such as page navigation, interaction links, footer, action buttons,etc.
             strip away all the parts of the page and leave only the microbiome study content. All study content should be preserved.
             """,
             expected_output="""
-            The whole study in its entirety with all the original study preserved. but without any other parts of the page such as page navigation, interaction links, footer, action buttons etc.
-            no part of the page should be left in the study. all study content should be preserved.
+            The cleaned whole study in its entirety. without any other parts of the page such as page navigation, interaction links, footer, action buttons etc.
+            no parts of the page unrelated to the study should be left in the study. all study content should be preserved.
             """,
             agent=agent,
             verbose=False,
             tools=[FileReadTool()],
-            output_file="output/prune.md"
+            output_file="output/clean_task.md"
         )
     
     def study_task(self, agent):
         return Task(
         description = """
-        Analyze the pruned microbiome study {raw} and extract structured experimental data for BugSigDB.
+        Analyze the clean microbiome study {raw} and extract structured experimental data for BugSigDB.
         
         Your task:
-        1. Read the pruned study content from the previous task
+        1. Read the clean study content from the previous task
         2. Identify all main experiments comparing different groups (e.g., disease vs. control, treatment vs. placebo)
         3. For EACH experiment, extract the following information:
             - Study location and host species

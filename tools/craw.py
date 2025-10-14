@@ -30,9 +30,9 @@ class crawl4aiTool(BaseTool):
                     markdown_generator=DefaultMarkdownGenerator(content_filter=PruningContentFilter)
                 )
             )
-            # Save entire article content in Markdown
-            with open("./output/raw.md", "w") as f:
-                f.write(result.markdown)
+            # # Save entire article content in Markdown
+            # with open("./output/raw.md", "w") as f:
+            #     f.write(result.markdown)
 
 
             return result.markdown
