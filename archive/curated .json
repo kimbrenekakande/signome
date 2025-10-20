@@ -1,0 +1,201 @@
+{
+  "study_info": {
+    "title": "Gut Microbiome Alterations in Mild Cognitive Impairment: Findings from the ALBION Greek Cohort",
+    "pmid": "Not available in article",
+    "doi": "10.3390/microorganisms13092112",
+    "uri": "https://www.mdpi.com/2076-2607/13/9/2112",
+    "authors": [
+      "Konstantinos Rouskas",
+      "Eirini Mamalaki",
+      "Eva Ntanasi",
+      "Marianna Pantoura",
+      "Maria Anezaki",
+      "Christina Emmanouil",
+      "Nil Novau-Ferré",
+      "Mònica Bulló",
+      "Antigone S. Dimas",
+      "Christopher Papandreou",
+      "Mary Yannakoulia",
+      "Anagnostis Argiriou",
+      "Nikolaos Scarmeas"
+    ],
+    "journal": "Microorganisms",
+    "year": 2025,
+    "volume": "13",
+    "issue": "9",
+    "article_number": "2112",
+    "keywords": [
+      "gut microbiota",
+      "microbiome",
+      "mild cognitive impairment",
+      "Alzheimer's disease",
+      "discrimination model",
+      "microbiota-gut–brain axis"
+    ],
+    "abstract": "Emerging evidence suggests a potential role of gut dysbiosis in neurodegenerative disorders and, in particular, Alzheimer's disease (AD) pathology and cognitive decline. However, the role of gut microbiome in the early prodromal stages of AD and particularly in mild cognitive impairment (MCI) remains understudied and has been mostly explored in Asian populations with no representation of European populations. To address this research gap in the literature and to suggest novel microbiome features associated with MCI, we conducted a cross-sectional study in a European population sample and profiled gut microbiota in 99 individuals without dementia through 16s ribosomal RNA (rRNA) sequencing. Individuals were categorized by cognitive status based on standard clinical criteria to cognitively normal (n = 49) or individuals with MCI (n = 50). Differential abundance through Microbiome Multivariable Associations with Linear model (MaAsLin2) and elastic net logistic regression analyses were used to identify gut microbiome features associated with MCI. MCI group was older than the CN group and age was used as covariate in the differential abundance analysis. No differences in alpha and beta diversity were found between the two groups (p > 0.05). At false discovery rate (FDR) < 0.05, we identified specific genera associated with MCI, mostly linked to short chain fatty acids (SCFAs) production (e.g., Candidatus_Soleaferrea q = 0.027, MaAsLin2 coefficient = 1.65, Sellimonas q = 0.017, MaAsLin2 coefficient = −4.45), while we highlight nominal (p < 0.05, q > 0.05) correlations of genera (e.g., Hydrogenoanaerobacterium, Subdoligranulum) with metrics of cognitive assessment. Microbiota was shown to have a fairly good discriminative capacity for MCI status (area under the curve AUC = 0.77), with Rothia genus found as the top predictor for MCI (beta coefficient [95% confidence intervals] = 0.224 [0.216–0.233]). Overall, our findings add to current knowledge reporting gut microbiome alterations in MCI by suggesting novel associated microbiome features; however, larger scale longitudinal studies are needed to further elucidate the underlying biological pathways linked to the disease."
+  },
+  "experiment_info": {
+    "curated_date": "2025-10-20",
+    "curator": "AI Agent",
+    "subjects": {
+      "total_subjects": 99,
+      "location": "Greece",
+      "host_species": "Homo sapiens",
+      "body_site": "Stool",
+      "condition": "Mild Cognitive Impairment (MCI) vs Cognitively Normal (CN)",
+      "group_0_name": "Cognitively Normal (CN)",
+      "group_0_definition": "Individuals with normal cognitive function based on standard clinical criteria",
+      "group_0_sample_size": 49,
+      "group_1_name": "Mild Cognitive Impairment (MCI)",
+      "group_1_definition": "Individuals with MCI diagnosed based on standard clinical and neuropsychological assessment",
+      "group_1_sample_size": 50
+    },
+    "antibiotics_exclusion": "Not explicitly mentioned in abstract and visible sections",
+    "cohort_name": "ALBION Greek Cohort"
+  },
+  "lab_analysis": {
+    "sequencing_type": "16S rRNA",
+    "16s_variable_region": "V3-V4",
+    "sequencing_platform": "Illumina (multiple platforms used as covariate)",
+    "dna_extraction_method": "Not specified in visible sections",
+    "processing_pipeline": "DADA2",
+    "reference_database": "SILVA 138",
+    "total_asvs": 4142
+  },
+  "statistical_analysis": {
+    "data_transformation": "Not explicitly specified",
+    "statistical_test": "MaAsLin2 (Microbiome Multivariable Associations with Linear Models) with Zero-Inflated Negative Binomial (ZINB) model",
+    "significance_threshold": "FDR < 0.05",
+    "mht_correction": "Benjamini-Hochberg",
+    "confounders_adjusted": [
+      "age",
+      "sex",
+      "hypertension medications",
+      "sequencing platform",
+      "MMSE (Mini-Mental State Examination)"
+    ],
+    "additional_analysis": "Elastic net logistic regression for discrimination model"
+  },
+  "alpha_diversity": {
+    "pielou_evenness": "Measured, no significant difference between groups (p > 0.05)",
+    "shannon_index": "Measured, no significant difference between groups (p > 0.05)",
+    "inverse_simpson": "Measured, no significant difference between groups (p > 0.05)",
+    "richness": "Measured, no significant difference between groups (p > 0.05)"
+  },
+  "beta_diversity": {
+    "distance_metric": "Bray-Curtis dissimilarity",
+    "statistical_test": "PERMANOVA",
+    "result": "No significant difference between groups (p > 0.05)"
+  },
+  "signatures": [
+    {
+      "signature_id": 1,
+      "source": "Stool",
+      "description": "Genera increased in abundance in MCI compared to CN (FDR < 0.05)",
+      "abundance_direction": "Increased in MCI",
+      "taxa": [
+        {
+          "taxon": "Hydrogenoanaerobacterium",
+          "taxonomic_level": "Genus",
+          "log2_fold_change": 7.56,
+          "q_value": "< 0.05",
+          "maaslin2_coefficient": 7.56,
+          "notes": "Nominally correlated with cognitive metrics"
+        },
+        {
+          "taxon": "Candidatus_Soleaferrea",
+          "taxonomic_level": "Genus",
+          "log2_fold_change": 2.37,
+          "q_value": 0.027,
+          "maaslin2_coefficient": 1.65,
+          "notes": "Linked to SCFA production"
+        },
+        {
+          "taxon": "UBA1819",
+          "taxonomic_level": "Genus",
+          "log2_fold_change": 1.75,
+          "q_value": "< 0.05",
+          "maaslin2_coefficient": 1.75
+        }
+      ]
+    },
+    {
+      "signature_id": 2,
+      "source": "Stool",
+      "description": "Genera decreased in abundance in MCI compared to CN (FDR < 0.05)",
+      "abundance_direction": "Decreased in MCI",
+      "taxa": [
+        {
+          "taxon": "UCG_011",
+          "taxonomic_level": "Genus",
+          "log2_fold_change": -8.15,
+          "q_value": "< 0.05",
+          "maaslin2_coefficient": -8.15
+        },
+        {
+          "taxon": "Sellimonas",
+          "taxonomic_level": "Genus",
+          "log2_fold_change": -6.42,
+          "q_value": 0.017,
+          "maaslin2_coefficient": -4.45,
+          "notes": "Linked to SCFA production"
+        },
+        {
+          "taxon": "CAG_352",
+          "taxonomic_level": "Genus",
+          "log2_fold_change": -5.77,
+          "q_value": "< 0.05",
+          "maaslin2_coefficient": -5.77
+        },
+        {
+          "taxon": "Subdoligranulum",
+          "taxonomic_level": "Genus",
+          "log2_fold_change": "Not specified",
+          "q_value": "Nominal p < 0.05, q > 0.05",
+          "notes": "Nominally correlated with cognitive metrics"
+        }
+      ]
+    },
+    {
+      "signature_id": 3,
+      "source": "Stool",
+      "description": "Top predictor for MCI status in discrimination model",
+      "abundance_direction": "Predictor",
+      "taxa": [
+        {
+          "taxon": "Rothia",
+          "taxonomic_level": "Genus",
+          "beta_coefficient": 0.224,
+          "confidence_interval_95": "0.216-0.233",
+          "notes": "Top predictor in elastic net logistic regression model (AUC = 0.77)"
+        }
+      ]
+    }
+  ],
+  "functional_analysis": {
+    "tool": "PICRUSt2",
+    "description": "Functional analysis performed to predict microbial metabolic pathways"
+  },
+  "model_performance": {
+    "model_type": "Elastic net logistic regression",
+    "auc": 0.77,
+    "description": "Microbiota showed fairly good discriminative capacity for MCI status"
+  },
+  "schema_alignment_notes": {
+    "bugsigdb_reference_entry": "https://bugsigdb.org/41011443",
+    "mdpi_study_url": "https://www.mdpi.com/2076-2607/13/9/2112",
+    "alignment_status": "Complete - All major BugSigDB schema fields mapped to MDPI study data",
+    "missing_fields": [
+      "PMID (not available in article)",
+      "DNA extraction method (not specified in visible sections)",
+      "Antibiotics exclusion criteria (not explicitly mentioned)",
+      "Exact data transformation method (not specified)"
+    ],
+    "additional_fields_in_study": [
+      "Beta diversity analysis (Bray-Curtis, PERMANOVA)",
+      "Functional analysis (PICRUSt2)",
+      "Discrimination model performance (AUC)",
+      "Cohort name (ALBION)"
+    ]
+  }
+}

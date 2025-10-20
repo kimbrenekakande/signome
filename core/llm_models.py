@@ -11,11 +11,10 @@ groq = LLM(
     verbose=True
 )
 
-
 deepseek = LLM(
     provider="deepseek",
     model="deepseek/deepseek-chat",
-    api_key="sk-d6fa04f2a09049c99b13c58b720dc5b6",
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
     temperature=0.7,
 )
 
@@ -28,4 +27,9 @@ open = LLM(
     model="openrouter/moonshotai/kimi-k2-instruct-0905",
     api_key=os.getenv("MOONSHOT_API_KEY")
 )
-    
+
+claude = LLM(
+    model="anthropic/claude-sonnet-4-5-20250929",  # This is the correct model name for Claude 3.5 Sonnet
+    api_key=os.getenv("ANTHROPIC_API_KEY"),  # Make sure to use ANTHROPIC_API_KEY in your .env file
+    temperature=0.7
+)

@@ -1,76 +1,81 @@
 from crewai import Agent
 from crewai_tools import FileReadTool
-from .model import deepseek, gemini, groq
-from tools.craw import crawl4aiTool
+from .llm_models import deepseek, gemini, groq, claude
 
-crawl4ai = crawl4aiTool()
+
+
+# magezi = DirectorySearchTool(
+#         directory = 'knowledge',
+#         config = dict(
+#             llm  = dict( provider = "anthropic", config = dict( model = "Claude-Sonnet-4.5" ), ), #model missing
+#             embedder = dict(provider = "ollama", config = dict( model = "embeddinggemma:latest" )),
+#         )
+#     )
+
 
 class AgentsAll():
-        
-    # def scraper(self):
-    #     return Agent(
-    #     role="Microbiome Study Web Scraper",
-    #     goal="Extract complete content from the provided microbiome study {url} using crawl4ai tool",
-    #     backstory="""
-    #     You are an efficient microbiome study scraper specialist. When given a URL, you use your 
-    #     crawl4ai tool to extract all content from {url}.
-    #     """,
-    #     allow_delegation=False,
-    #     tools=[crawl4ai],
-    #     llm=groq,
-    #     verbose=True,
-    # )
-    
-    def imager(self):
+    def experiment_extractor(self):
         return Agent(
-        role="Image Analyzer",
-        goal="Analyze the images in the study and extract the relevant information for BugSigDB database entries of this study",
-        backstory="""
-        You are an efficient microbiome study image charts, tables and graphs interpretation specialist with years of experience in microbiome research analysis. When given a URL, you use your 
-        to extract all the data from the images, tables and graphs in the study for BugSigDB database entries of this study.
-        """,
-        allow_delegation=False,
-        multimodal=True,
-        llm=gemini,
+        role='Microbiome Experiment Identifier',
+        
+        goal='''Extract ALL experiments (comparisons between groups) from a microbiome 
+        research paper at {study_path}. Identify every unique comparison made in the study, including 
+        main analyses, subgroup analyses, and sensitivity analyses.''',
+        
+        backstory='''You are a meticulous research analyst specializing in microbiome 
+        studies. You understand that a single paper can contain multiple experiments - 
+        each representing a distinct comparison between two groups of subjects. 
+        
+        You know that experiments differ when they involve:
+        - Different conditions (e.g., diabetes vs obesity)
+        - Different age groups (e.g., <3 months vs 4-7 months)
+        - Different populations (e.g., full cohort vs males only)
+        - Different statistical approaches (e.g., crude vs adjusted models)
+        - Different timepoints (e.g., baseline vs post-treatment)
+        
+        You excel at finding group definitions scattered across Methods and Results 
+        sections, and you understand medical terminology related to diagnostic criteria.
+        
+        You work systematically, ensuring no comparison is missed, and you document 
+        the exact criteria used to define each group.''',
+        
+        tools=[FileReadTool()],
         verbose=True,
+        allow_delegation=False,
+        llm=claude
     )
+    
+    def signature_extractor(self):
+        return Agent(
+        role='Microbiome Signature Data Miner',
         
-    # def cleaner(self):
-    #     return Agent(
-    #     role="Microbiome Study Cleaner",
-    #     goal="clean the study passed by scraper in markdown format without any other parts of the page such as page navigation, interaction links, footer, action buttons,links etc.",
-    #     backstory="""
-    #     You are a microbiome study specialist who reads study's , rewrites them as they are while excluding all other parts of the page such as page navigation, interaction links, footer, action buttons,links etc.
-    #     You have a decade of experience in microbiome research and can read and rewrite studies with ease. you rewrite them word for word.
-    #     """,
-    #     tools=[FileReadTool()],
-    #     allow_delegation=False,
-    #     verbose=True,
-    #     llm=gemini,
+        goal='''Extract ALL signatures (individual bacteria findings) from each 
+        experiment in a microbiome study at {study_path}. For each bacteria found to be significantly 
+        different, capture the microbe name, direction of change (increased/decreased), 
+        statistical values, and source table/figure.''',
         
-    # )
-
-    # def microbiologist(self):
-    #     return Agent(
-    #     role="Microbiologist Data Curator",
-    #     goal="Extract and structure experimental data from {raw} microbiome study passed by cleaner for BugSigDB database entries of this study",
-    #     backstory="""
-    #     You are a highly experienced microbiologist and data curator working at BugSigDB. You have expertise 
-    #     spanning multiple institutions including University of Novi Sad (Serbia), University of Glasgow (UK), 
-    #     University of Porto (Portugal), Fudan University (China), and University of Trento (Italy).
+        backstory='''You are a precision data extraction specialist with deep expertise 
+        in microbiology and statistical analysis. You understand that:
         
-    #     Your specialty is reading microbiome research papers and extracting key experimental metadata in a 
-    #     structured format. You understand:
-    #     - Study design and experimental groups
-    #     - Sequencing methodologies (16S rRNA, shotgun metagenomics, etc.)
-    #     - Statistical analyses used in microbiome research
-    #     - Alpha diversity metrics (Shannon, Chao1, Simpson, etc.)
-    #     - How to identify the main experiments in a paper
+        - A signature = ONE microbe that was significantly different in ONE experiment
+        - Each experiment can have 1 to 100+ signatures
+        - Signatures are primarily found in tables (especially supplementary tables)
+        - The same bacteria can appear in multiple experiments (this is expected!)
         
-    #     You are meticulous about extracting accurate data and always provide complete structured output 
-    #     in the required format.
-    #     """,
-    #     allow_delegation=False,
-    #     llm=deepseek,
-    # )
-
+        You are skilled at:
+        - Parsing complex tables with taxonomic names
+        - Identifying statistical significance indicators (p-values, asterisks, FDR)
+        - Determining direction of change from fold-change values or +/- indicators
+        - Recognizing bacterial naming conventions (genus, species, families ending in -aceae)
+        - Handling outdated taxonomic names and synonyms
+        
+        You extract data methodically, processing one table at a time to stay within 
+        context limits. You never miss a significant finding, and you always capture 
+        the source of each signature.''',
+        
+        tools=[FileReadTool()],
+        verbose=True,
+        allow_delegation=False,
+        llm=claude,
+        max_iter=15  # Allow multiple iterations for large tables
+    )

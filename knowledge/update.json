@@ -1,0 +1,695 @@
+{
+  "version": "1.1",
+  "description": "Updated schema for BugSigDB microbiome study entries based on actual BugSigDB implementation. A study can contain multiple experiments, each experiment can have multiple signatures, and each signature can have multiple bacterial taxa.",
+  "hierarchy": {
+    "study": "Contains bibliographic information and metadata about the research paper",
+    "experiments": "One or more experiments within the study, each representing a specific comparison between two groups",
+    "signatures": "One or more signatures per experiment, each representing a finding of differentially abundant bacteria",
+    "taxa": "One or more bacterial taxa per signature (all moving in the same direction)"
+  },
+  "schema": {
+    "study": {
+      "bibliographic_information": {
+        "study_id": {
+          "type": "string",
+          "description": "Unique identifier, typically PMID",
+          "required": true,
+          "example": "40159147",
+          "note": "Used as base page identifier in BugSigDB"
+        },
+        "pmid": {
+          "type": "integer",
+          "description": "PubMed identifier",
+          "required": false,
+          "example": 40159147,
+          "note": "May not always be available for preprints"
+        },
+        "doi": {
+          "type": "string",
+          "format": "url",
+          "description": "Digital object identifier",
+          "required": false,
+          "example": "10.3390/microorganisms13092112"
+        },
+        "uri": {
+          "type": "string",
+          "format": "url",
+          "description": "Uniform resource identifier to the paper",
+          "required": false,
+          "example": "https://www.mdpi.com/2076-2607/13/9/2112"
+        },
+        "title": {
+          "type": "string",
+          "description": "Full title of the research paper",
+          "required": true,
+          "example": "Why do babies cry? Exploring the role of the gut microbiota in infantile colic, constipation, and cramps in the KOALA birth cohort study"
+        },
+        "authors": {
+          "type": "string",
+          "description": "Comma-separated list of authors (LastName FirstInitial format)",
+          "required": true,
+          "example": "Smith J, Jones A, Williams B"
+        },
+        "journal": {
+          "type": "string",
+          "description": "Journal name",
+          "required": true,
+          "example": "Microorganisms"
+        },
+        "year": {
+          "type": "integer",
+          "description": "Publication year",
+          "required": true,
+          "example": 2024
+        },
+        "keywords": {
+          "type": "string",
+          "description": "Comma-separated keywords",
+          "required": false,
+          "example": "gut microbiota, infantile colic, constipation"
+        }
+      },
+      "study_metadata": {
+        "study_design": {
+          "type": "string",
+          "description": "Study design type",
+          "controlled_vocabulary": true,
+          "required": false,
+          "example": "case-control",
+          "options": [
+            "case-control",
+            "cohort",
+            "cross-sectional",
+            "time series / longitudinal observational",
+            "intervention/clinical trial"
+          ]
+        },
+        "curated_date": {
+          "type": "string",
+          "format": "date",
+          "pattern": "YYYY/MM/DD",
+          "description": "Date of curation",
+          "required": true
+        },
+        "curator": {
+          "type": "string",
+          "description": "Username of curator",
+          "required": true
+        },
+        "revision_editors": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of revision editor usernames",
+          "required": false,
+          "example": ["Shulamite", "MyleeeA"]
+        }
+      },
+      "quality_control_flags": {
+        "retracted_paper": {
+          "type": "boolean",
+          "description": "Paper has been retracted",
+          "default": false
+        },
+        "contamination_issues_suspected": {
+          "type": "boolean",
+          "description": "Contamination issues suspected in the study",
+          "default": false
+        },
+        "batch_effect_issues_suspected": {
+          "type": "boolean",
+          "description": "Batch effect issues suspected",
+          "default": false
+        },
+        "uncontrolled_confounding_suspected": {
+          "type": "boolean",
+          "description": "Uncontrolled confounding suspected",
+          "default": false
+        },
+        "results_are_suspect": {
+          "type": "boolean",
+          "description": "Results are suspect for various reasons",
+          "default": false
+        },
+        "tags_applied": {
+          "type": "boolean",
+          "description": "Tags have been applied",
+          "default": false
+        }
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "description": "One or more experiments within the study. Each experiment represents ONE comparison between TWO groups.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "experiment_id": {
+            "type": "integer",
+            "description": "Sequential ID within the study",
+            "required": true,
+            "example": 1
+          },
+          "subjects": {
+            "location_of_subjects": {
+              "type": "string",
+              "description": "Geographic location where study subjects were recruited",
+              "controlled_vocabulary": true,
+              "required": true,
+              "example": "Netherlands",
+              "note": "Country name, standardized"
+            },
+            "host_species": {
+              "type": "string",
+              "description": "Species from which microbiome was sampled (Latin binomial)",
+              "controlled_vocabulary": true,
+              "required": true,
+              "example": "Homo sapiens",
+              "common_values": [
+                "Homo sapiens",
+                "Mus musculus",
+                "Rattus norvegicus"
+              ]
+            },
+            "body_site": {
+              "type": "string",
+              "description": "Anatomical site where microbial samples were extracted from according to the Uber Anatomy Ontology (UBERON)",
+              "controlled_vocabulary": true,
+              "required": true,
+              "example": "Feces",
+              "uberon_id": "http://purl.obolibrary.org/obo/UBERON_0001988",
+              "aliases": [
+                "Cow dung",
+                "Cow pat",
+                "Droppings",
+                "Dung",
+                "Excrement",
+                "Faeces",
+                "Fecal material",
+                "Fecal matter",
+                "Stool"
+              ],
+              "common_values": [
+                "Feces",
+                "Saliva",
+                "Skin",
+                "Vagina",
+                "Blood",
+                "Nasal cavity"
+              ]
+            },
+            "condition": {
+              "type": "string",
+              "description": "The experimental condition/phenotype studied according to the Experimental Factor Ontology (EFO) or Human Phenotype Ontology (HPO)",
+              "controlled_vocabulary": true,
+              "required": true,
+              "example": "Constipation",
+              "efo_hpo_id": "http://purl.obolibrary.org/obo/HP_0002019",
+              "aliases": [
+                "Constipation",
+                "Costiveness",
+                "Dyschezia"
+              ],
+              "note": "The disease, phenotype, or health condition being studied"
+            },
+            "group_0_name": {
+              "type": "string",
+              "description": "Name/label for the CONTROL (unexposed/reference) group for case-control studies",
+              "required": true,
+              "example": "Low constipation >3d-crude (< 3months)",
+              "note": "This is typically the healthy or low-symptom group"
+            },
+            "group_1_name": {
+              "type": "string",
+              "description": "Name/label for the CASE (exposed/diseased) group for case-control studies",
+              "required": true,
+              "example": "High constipation > 3d-crude (< 3months)",
+              "note": "This is typically the diseased or high-symptom group"
+            },
+            "group_1_definition": {
+              "type": "string",
+              "description": "Diagnostic criteria applied to define the specific condition/phenotype represented in the case (exposed) group",
+              "required": true,
+              "example": "High constipation: >3 days without defecation in infants <3 months. (full cohort).",
+              "note": "Should include specific thresholds, diagnostic tools, and inclusion criteria"
+            },
+            "group_0_definition": {
+              "type": "string",
+              "description": "Diagnostic criteria for the control group (optional)",
+              "required": false,
+              "example": "Healthy controls with no GI symptoms"
+            },
+            "group_0_sample_size": {
+              "type": "integer",
+              "description": "Number of subjects in control group",
+              "required": false,
+              "example": 950,
+              "note": "May not always be reported separately"
+            },
+            "group_1_sample_size": {
+              "type": "integer",
+              "description": "Number of subjects in case group",
+              "required": false,
+              "example": 114,
+              "note": "May not always be reported separately"
+            },
+            "antibiotics_exclusion": {
+              "type": "string",
+              "description": "Number of days/months without antibiotics usage and other antibiotics-related criteria used to exclude participants (if any)",
+              "required": false,
+              "example": "3 months",
+              "note": "Can also be descriptive text like 'No antibiotics in past 6 months'"
+            }
+          },
+          "lab_analysis": {
+            "sequencing_type": {
+              "type": "string",
+              "description": "Type of sequencing method used",
+              "controlled_vocabulary": true,
+              "required": true,
+              "example": "16S",
+              "options": [
+                "16S",
+                "Shotgun metagenomics",
+                "ITS",
+                "Whole genome sequencing"
+              ]
+            },
+            "16s_variable_region": {
+              "type": "string",
+              "description": "One or more hypervariable region(s) of the bacterial 16S gene",
+              "controlled_vocabulary": true,
+              "required": false,
+              "example": "V4",
+              "options": [
+                "V1",
+                "V2",
+                "V3",
+                "V4",
+                "V5",
+                "V6",
+                "V7",
+                "V8",
+                "V9",
+                "V1-V2",
+                "V3-V4",
+                "V4-V5"
+              ],
+              "note": "Only applicable if sequencing_type is 16S"
+            },
+            "sequencing_platform": {
+              "type": "string",
+              "description": "Manufacturer and experimental platform used for quantifying microbial abundance",
+              "controlled_vocabulary": true,
+              "required": true,
+              "example": "Illumina",
+              "common_values": [
+                "Illumina",
+                "Illumina MiSeq",
+                "Illumina HiSeq",
+                "Illumina NovaSeq",
+                "Ion Torrent",
+                "PacBio",
+                "Oxford Nanopore",
+                "Not specified"
+              ]
+            }
+          },
+          "statistical_analysis": {
+            "data_transformation": {
+              "type": "string",
+              "description": "Data transformation applied to microbial abundance measurements prior to differential abundance testing (if any)",
+              "controlled_vocabulary": true,
+              "required": false,
+              "example": "centered log-ratio",
+              "options": [
+                "centered log-ratio",
+                "log10",
+                "log2",
+                "relative abundance",
+                "square root",
+                "None"
+              ]
+            },
+            "statistical_test": {
+              "type": "string",
+              "description": "Statistical method used for differential abundance testing",
+              "controlled_vocabulary": true,
+              "required": true,
+              "example": "Logistic Regression",
+              "common_values": [
+                "Wilcoxon rank-sum test",
+                "Mann-Whitney U test",
+                "T-test",
+                "LEfSe",
+                "DESeq2",
+                "ANCOM",
+                "ANCOM-BC",
+                "Logistic Regression",
+                "Linear Regression",
+                "MaAsLin2",
+                "edgeR"
+              ]
+            },
+            "significance_threshold": {
+              "type": "number",
+              "description": "p-value or FDR threshold used for differential abundance testing (if any)",
+              "required": true,
+              "example": 0.05,
+              "common_values": [0.05, 0.01, 0.001, 0.1]
+            },
+            "mht_correction": {
+              "type": "string",
+              "description": "Have statistical tests been corrected for multiple hypothesis testing (MHT)?",
+              "required": true,
+              "enum": ["Yes", "No"],
+              "example": "Yes",
+              "note": "If FDR, Benjamini-Hochberg, or Bonferroni mentioned, this should be Yes"
+            },
+            "confounders_controlled_for": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Confounding factors accounted for in statistical analysis",
+              "controlled_vocabulary": true,
+              "required": false,
+              "example": [
+                "age",
+                "sex",
+                "BMI",
+                "diet",
+                "antibiotics"
+              ],
+              "note": "Only applicable for adjusted/multivariate models"
+            }
+          },
+          "alpha_diversity": {
+            "description": "Alpha diversity metrics comparing the two groups",
+            "note": "These indicate whether diversity WITHIN samples differs between groups",
+            "pielou": {
+              "type": "string",
+              "description": "Pielou evenness index - quantifies how equal the community is numerically",
+              "enum": ["increased", "decreased", "unchanged"],
+              "required": false,
+              "example": "unchanged",
+              "interpretation": {
+                "increased": "Group 1 has MORE even communities",
+                "decreased": "Group 1 has LESS even communities",
+                "unchanged": "No significant difference or not reported"
+              }
+            },
+            "shannon": {
+              "type": "string",
+              "description": "Shannon diversity index - estimator of species richness and evenness (more weight on species richness)",
+              "enum": ["increased", "decreased", "unchanged"],
+              "required": false,
+              "example": "unchanged",
+              "interpretation": {
+                "increased": "Group 1 has HIGHER Shannon diversity",
+                "decreased": "Group 1 has LOWER Shannon diversity",
+                "unchanged": "No significant difference or not reported"
+              }
+            },
+            "inverse_simpson": {
+              "type": "string",
+              "description": "Inverse Simpson index - modification of Simpson's index (emphasizes common species)",
+              "enum": ["increased", "decreased", "unchanged"],
+              "required": false,
+              "example": "unchanged"
+            },
+            "richness": {
+              "type": "string",
+              "description": "Species richness - number of distinct species/taxa",
+              "enum": ["increased", "decreased", "unchanged"],
+              "required": false,
+              "example": "unchanged",
+              "interpretation": {
+                "increased": "Group 1 has MORE species",
+                "decreased": "Group 1 has FEWER species",
+                "unchanged": "No significant difference or not reported"
+              }
+            },
+            "chao1": {
+              "type": "string",
+              "description": "Chao1 estimator - estimates total species richness",
+              "enum": ["increased", "decreased", "unchanged"],
+              "required": false
+            }
+          },
+          "signatures": {
+            "type": "array",
+            "description": "One or more signatures per experiment. Each signature represents a SET of bacteria that changed in the SAME direction.",
+            "note": "Typically one signature for 'increased' bacteria and one for 'decreased' bacteria per experiment",
+            "items": {
+              "type": "object",
+              "properties": {
+                "signature_id": {
+                  "type": "integer",
+                  "description": "Sequential ID within the experiment",
+                  "required": true,
+                  "example": 1
+                },
+                "signature_metadata": {
+                  "curated_date": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "YYYY/MM/DD",
+                    "description": "Date of signature curation",
+                    "required": false
+                  },
+                  "curator": {
+                    "type": "string",
+                    "description": "Username of curator",
+                    "required": false
+                  },
+                  "revision_editors": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of revision editor usernames",
+                    "required": false,
+                    "example": ["Shulamite"]
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "Reference to figure/table in the paper where this signature was found",
+                    "required": true,
+                    "example": "Table S6",
+                    "common_formats": [
+                      "Table 1",
+                      "Table S6",
+                      "Figure 3A",
+                      "Supplementary Table 2",
+                      "Figure 5C and Table S2"
+                    ]
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Brief description of what this signature represents (often the table/figure caption)",
+                    "required": true,
+                    "example": "Results of regression models testing associations between one-month stool microbiota core genera and functional gastrointestinal symptoms."
+                  },
+                  "abundance_in_group_1": {
+                    "type": "string",
+                    "description": "Direction of abundance change in Group 1 (case/exposed group) with full group name",
+                    "required": true,
+                    "format": "[increased|decreased] abundance in [Group 1 name]",
+                    "example": "increased abundance in High constipation > 3d-crude (< 3months)",
+                    "note": "CRITICAL: All taxa in this signature moved in THIS direction"
+                  }
+                },
+                "taxa": {
+                  "type": "array",
+                  "description": "One or more bacterial taxa in this signature. ALL taxa in a signature have the SAME direction of change.",
+                  "note": "If bacteria moved in opposite directions, they belong to different signatures",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ncbi_name": {
+                        "type": "string",
+                        "description": "Taxonomic name of the microbe (genus, species, family, etc.)",
+                        "required": true,
+                        "example": "Enterococcus",
+                        "note": "Should match NCBI taxonomy when possible",
+                        "formats": [
+                          "Genus (one word): Enterococcus",
+                          "Species (two words): Mediterraneibacter gnavus",
+                          "Family (ends in -aceae): Enterobacteriaceae",
+                          "Order (ends in -ales): Clostridiales"
+                        ]
+                      },
+                      "taxonomic_level": {
+                        "type": "string",
+                        "description": "Level of taxonomic classification",
+                        "required": false,
+                        "enum": [
+                          "species",
+                          "genus",
+                          "family",
+                          "order",
+                          "class",
+                          "phylum"
+                        ],
+                        "example": "genus",
+                        "note": "Can be inferred from the name format"
+                      },
+                      "ncbi_taxonomy_id": {
+                        "type": "integer",
+                        "description": "NCBI Taxonomy ID (if available)",
+                        "required": false,
+                        "example": 1350
+                      },
+                      "quality_control": {
+                        "type": "string",
+                        "description": "Quality control status for this taxon",
+                        "enum": [
+                          "No known issues",
+                          "Review needed",
+                          "Outdated taxonomy"
+                        ],
+                        "required": false,
+                        "default": "No known issues"
+                      },
+                      "statistical_values": {
+                        "type": "object",
+                        "description": "Statistical measures for this taxon (optional)",
+                        "required": false,
+                        "properties": {
+                          "p_value": {
+                            "type": "number",
+                            "description": "P-value for differential abundance",
+                            "example": 0.001
+                          },
+                          "fdr": {
+                            "type": "number",
+                            "description": "False discovery rate (FDR) adjusted p-value",
+                            "example": 0.015
+                          },
+                          "fold_change": {
+                            "type": "number",
+                            "description": "Fold change in abundance",
+                            "example": 2.3
+                          },
+                          "log2fc": {
+                            "type": "number",
+                            "description": "Log2 fold change",
+                            "example": 1.2
+                          },
+                          "effect_size": {
+                            "type": "number",
+                            "description": "Effect size (Cohen's d, etc.)",
+                            "example": 0.8
+                          }
+                        }
+                      },
+                      "links": {
+                        "type": "object",
+                        "description": "External links for this taxon",
+                        "required": false,
+                        "properties": {
+                          "ncbi": {
+                            "type": "string",
+                            "format": "url",
+                            "description": "Link to NCBI Taxonomy"
+                          },
+                          "other_databases": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "relationships": {
+    "study_to_experiments": {
+      "type": "one-to-many",
+      "description": "One study (paper) can have many experiments (comparisons)",
+      "typical_range": "1-50 experiments per study",
+      "example": "Baby colic study had 28 experiments"
+    },
+    "experiment_to_signatures": {
+      "type": "one-to-many",
+      "description": "One experiment can have multiple signatures (typically 0-2: one for increased, one for decreased)",
+      "typical_range": "0-2 signatures per experiment (but can be more if multiple analyses)",
+      "note": "Some experiments may have no significant findings (0 signatures)"
+    },
+    "signature_to_taxa": {
+      "type": "one-to-many",
+      "description": "One signature contains multiple taxa (bacteria) that all changed in the SAME direction",
+      "typical_range": "1-100+ taxa per signature",
+      "note": "All taxa in a signature increased OR decreased (not mixed)"
+    }
+  },
+  "key_concepts": {
+    "experiment_definition": "An experiment is ONE comparison between TWO groups of subjects. Different experiments arise from: different conditions, different age groups, different statistical methods (crude vs adjusted), different subpopulations, or different timepoints.",
+    "signature_definition": "A signature is a SET of bacteria that were significantly different in ONE experiment, all moving in the SAME DIRECTION (all increased OR all decreased in Group 1).",
+    "taxa_grouping": "Within a signature, all taxa moved in the same direction. If Bacteria A increased and Bacteria B decreased in the same experiment, they belong to TWO DIFFERENT signatures."
+  },
+  "common_patterns": {
+    "multiple_experiments_same_condition": "A single condition (e.g., colic) can have multiple experiments if analyzed with different methods (crude model vs adjusted model) or in different subpopulations (full cohort vs males only).",
+    "repeated_bacteria_across_experiments": "The same bacteria can appear in multiple experiments across a study. This is EXPECTED and indicates consistent findings.",
+    "signature_splitting": "If an experiment finds 10 bacteria increased and 5 bacteria decreased, this creates TWO signatures: Signature 1 (10 increased bacteria) and Signature 2 (5 decreased bacteria)."
+  },
+  "extraction_priorities": {
+    "high_priority": [
+      "study_id",
+      "title",
+      "body_site",
+      "condition",
+      "group names and definitions",
+      "sequencing_type",
+      "statistical_test",
+      "significance_threshold",
+      "mht_correction",
+      "taxa names",
+      "direction (increased/decreased)",
+      "source (table/figure)"
+    ],
+    "medium_priority": [
+      "sample_sizes",
+      "antibiotics_exclusion",
+      "sequencing_platform",
+      "data_transformation",
+      "alpha_diversity",
+      "statistical values (p-values, fold-changes)"
+    ],
+    "low_priority": [
+      "authors",
+      "journal",
+      "keywords",
+      "confounders",
+      "ncbi_taxonomy_id"
+    ]
+  },
+  "validation_rules": {
+    "experiment_validation": [
+      "Each experiment must have exactly 2 groups (Group 0 and Group 1)",
+      "Group 1 definition should be detailed and specific",
+      "Condition should map to EFO/HPO ontology",
+      "Body site should map to UBERON ontology"
+    ],
+    "signature_validation": [
+      "All taxa in a signature must have the same direction",
+      "Source must reference an actual table/figure",
+      "abundance_in_group_1 must match the taxa direction"
+    ],
+    "taxa_validation": [
+      "Taxa names should match NCBI taxonomy when possible",
+      "Scientific names should be properly formatted (italics convention)"
+    ]
+  },
+  "notes": [
+    "Many fields use controlled vocabularies from ontologies (UBERON, EFO, HPO)",
+    "Some fields have aliases that map to canonical terms",
+    "Quality control flags help identify potential issues with studies",
+    "Each signature represents a set of bacteria that ALL changed in the SAME direction",
+    "The same bacteria can appear in multiple experiments (this shows consistency)",
+    "Experiments are distinguished by their comparison groups, not just the condition",
+    "One paper can have 1-50+ experiments depending on the complexity of the analysis"
+  ]
+}

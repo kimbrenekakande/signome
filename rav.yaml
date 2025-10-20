@@ -1,3 +1,0 @@
-scripts:
-  save-deps: pip freeze > requirements.txt
-  dep: pip install -r requirements.txt

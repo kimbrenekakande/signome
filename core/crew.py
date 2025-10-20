@@ -1,29 +1,29 @@
-from crewai import Crew
+from crewai import Crew, Process
+from crewai_tools import DirectorySearchTool
+from crewai.knowledge.source.string_knowledge_source import StringKnowledgeSource
 from .agents import AgentsAll
 from .tasks import TasksAll
-from .model import deepseek, gemini, groq
+from .llm_models import deepseek, gemini, groq
 
 
 
 
 agents = AgentsAll()
-tasks = TasksAll()
+tasks = TasksAll()  # Create an instance of TasksAll
 
 #agents
-# scraper = agents.scraper()
-imager = agents.imager()
-# cleaner = agents.cleaner()
-# microbiologist= agents.microbiologist()
+experiment_extractor = agents.experiment_extractor()
+signature_extractor = agents.signature_extractor()
 
 # Create tasks
-# scrape_task = tasks.scrape_task(scraper)
-image_task = tasks.image_task(imager)
-# clean_task = tasks.clean_task(cleaner)
-# study_task = tasks.study_task()
+experiment_task= tasks.extract_experiments_task(experiment_extractor)
+signature_task= tasks.extract_signatures_task(signature_extractor)
+
 
 #crew
 crew = Crew(
-    llm=gemini,
-    agents=[imager],
-    tasks=[ image_task],
+    name = 'sig',
+    agents=[experiment_extractor, signature_extractor],
+    tasks=[ experiment_task, signature_task ],  
+    process=Process.sequential
 )

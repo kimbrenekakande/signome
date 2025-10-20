@@ -36,3 +36,5 @@ class crawl4aiTool(BaseTool):
 
 
             return result.markdown
+
+
