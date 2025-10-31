@@ -1,0 +1,436 @@
+from browser_use import Agent
+from browser_use.llm import ChatAnthropic
+from dotenv import load_dotenv
+import asyncio
+import os
+load_dotenv()
+
+async def sch():
+    llm = ChatAnthropic(model="claude-sonnet-4-5", temperature=0.7)
+    task = """
+        First go to https://bugsigdb.org/41011443 and focus and analyze the schema of the database entries for microbiome studies
+        Extract the schema of the database entries for microbiome studies
+        save the schema as a .json file at the cwd
+        this schema is to later be used to curate studies
+                
+        
+        NOTE : 
+        - A study is a collection of experiments (can be multiple experiments)
+        - 📄 STUDY (The Paper)
+            └── 🔬 EXPERIMENT 1 (A specific comparison)
+                ├── 🦠 Signature 1 (Bacteria A was different)
+                ├── 🦠 Signature 2 (Bacteria B was different)
+                └── 🦠 Signature 3 (Bacteria C was different)
+            └── 🔬 EXPERIMENT 2 (Another comparison)
+                ├── 🦠 Signature 1 (Bacteria D was different)
+                └── 🦠 Signature 2 (Bacteria E was different)
+        
+        
+        """
+    agent = Agent(task=task, llm=llm, verbose=True)
+    await agent.run()
+
+async def main():
+    llm = ChatAnthropic(model="claude-sonnet-4-5", temperature=0.7)
+    task = """
+        Go to https://bmcmicrobiol.biomedcentral.com/articles/10.1186/s12866-025-04242-7 and analyze the study there
+        Extract the data of the study and make sure it is in line with the schema  below for the database entry
+        save the file as a .json file at the cwd
+        focus on the study and the schema of the database entries
+        NOTE : 
+        - A study is a collection of experiments (can be multiple experiments)
+        - Add a title to the study
+        
+        schema : 
+            {
+        "version": "1.0",
+        "description": "Schema for BugSigDB microbiome study entries. A study can contain multiple experiments, each experiment can have multiple signatures, and each signature can have multiple bacterial taxa.",
+        "hierarchy": {
+            "study": "Contains bibliographic information and metadata about the research paper",
+            "experiments": "One or more experiments within the study, each representing a specific comparison",
+            "signatures": "One or more signatures per experiment, each representing differentially abundant bacteria",
+            "taxa": "One or more bacterial taxa per signature"
+        },
+        "schema": {
+            "study": {
+            "bibliographic_information": {
+                "pmid": {
+                "type": "integer",
+                "description": "PubMed identifier",
+                "required": true,
+                "example": 41011443
+                },
+                "doi": {
+                "type": "string",
+                "format": "url",
+                "description": "Digital object identifier",
+                "required": false,
+                "example": "https://doi.org/10.3390/microorganisms13092112"
+                },
+                "uri": {
+                "type": "string",
+                "format": "url",
+                "description": "Uniform resource identifier",
+                "required": false,
+                "example": "https://www.mdpi.com/2076-2607/13/9/2112#app1-microorganisms-13-02112"
+                },
+                "citation": {
+                "type": "string",
+                "description": "Full citation text",
+                "required": true
+                },
+                "authors": {
+                "type": "string",
+                "description": "Comma-separated list of authors",
+                "required": true,
+                "example": "Rouskas K., Mamalaki E., Ntanasi E., ..."
+                },
+                "journal": {
+                "type": "string",
+                "description": "Journal name",
+                "required": true,
+                "example": "Microorganisms"
+                },
+                "year": {
+                "type": "integer",
+                "description": "Publication year",
+                "required": true,
+                "example": 2025
+                },
+                "keywords": {
+                "type": "string",
+                "description": "Comma-separated keywords",
+                "required": false,
+                "example": "Alzheimer's disease, discrimination model, gut microbiota, microbiome, microbiota-gut–brain axis, mild cognitive impairment"
+                }
+            },
+            "study_metadata": {
+                "study_design": {
+                "type": "string",
+                "description": "Study design type",
+                "controlled_vocabulary": true,
+                "required": true,
+                "example": "time series / longitudinal observational"
+                },
+                "curated_date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "YYYY/MM/DD",
+                "description": "Date of curation",
+                "required": true
+                },
+                "curator": {
+                "type": "string",
+                "description": "Username of curator",
+                "required": true
+                },
+                "revision_editors": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "List of revision editor usernames",
+                "required": false
+                }
+            },
+            "quality_control_flags": {
+                "retracted_paper": {
+                "type": "boolean",
+                "description": "Paper has been retracted",
+                "default": false
+                },
+                "contamination_issues_suspected": {
+                "type": "boolean",
+                "description": "Contamination issues suspected",
+                "default": false
+                },
+                "batch_effect_issues_suspected": {
+                "type": "boolean",
+                "description": "Batch effect issues suspected",
+                "default": false
+                },
+                "uncontrolled_confounding_suspected": {
+                "type": "boolean",
+                "description": "Uncontrolled confounding suspected",
+                "default": false
+                },
+                "results_are_suspect": {
+                "type": "boolean",
+                "description": "Results are suspect for various reasons",
+                "default": false
+                },
+                "tags_applied": {
+                "type": "boolean",
+                "description": "Tags have been applied",
+                "default": false
+                },
+                "needs_review": {
+                "type": "boolean",
+                "description": "Entry needs review",
+                "default": false
+                }
+            }
+            },
+            "experiments": {
+            "type": "array",
+            "description": "One or more experiments within the study",
+            "items": {
+                "type": "object",
+                "properties": {
+                "subjects": {
+                    "location_of_subjects": {
+                    "type": "string",
+                    "description": "Geographic location of study subjects",
+                    "required": true,
+                    "example": "Greece"
+                    },
+                    "host_species": {
+                    "type": "string",
+                    "description": "Species from which microbiome was sampled",
+                    "controlled_vocabulary": true,
+                    "required": true,
+                    "example": "Homo sapiens"
+                    },
+                    "body_site": {
+                    "type": "string",
+                    "description": "Anatomical site where microbial samples were extracted from (Uber Anatomy Ontology)",
+                    "controlled_vocabulary": true,
+                    "required": true,
+                    "example": "Feces",
+                    "aliases": ["Cow dung", "Cow pat", "Droppings", "Dung", "Excrement"]
+                    },
+                    "condition": {
+                    "type": "string",
+                    "description": "Experimental condition/phenotype studied (Experimental Factor Ontology)",
+                    "controlled_vocabulary": true,
+                    "required": true,
+                    "example": "Cognitive impairment",
+                    "aliases": ["Abnormality of cognition", "Cognitive abnormality"]
+                    },
+                    "group_0_name": {
+                    "type": "string",
+                    "description": "Control/unexposed group name",
+                    "required": true,
+                    "example": "Cognitively Normal (CN)"
+                    },
+                    "group_1_name": {
+                    "type": "string",
+                    "description": "Case/exposed group name",
+                    "required": true,
+                    "example": "Mild Cognitive Impairment (MCI)"
+                    },
+                    "group_1_definition": {
+                    "type": "string",
+                    "description": "Diagnostic criteria for the case group",
+                    "required": false,
+                    "example": "Milld cognitive impairment (MCI) Is an early prodromal stage of Alzheimer disease (AD)"
+                    },
+                    "group_0_sample_size": {
+                    "type": "integer",
+                    "description": "Number of subjects in control group",
+                    "required": true,
+                    "example": 49
+                    },
+                    "group_1_sample_size": {
+                    "type": "integer",
+                    "description": "Number of subjects in case group",
+                    "required": true,
+                    "example": 50
+                    },
+                    "antibiotics_exclusion": {
+                    "type": "string",
+                    "description": "Days without antibiotics usage and related criteria",
+                    "required": false,
+                    "example": "3 months"
+                    }
+                },
+                "lab_analysis": {
+                    "sequencing_type": {
+                    "type": "string",
+                    "description": "Type of sequencing used",
+                    "controlled_vocabulary": true,
+                    "required": true,
+                    "example": "16S"
+                    },
+                    "16s_variable_region": {
+                    "type": "string",
+                    "description": "Hypervariable region(s) of the bacterial 16S gene",
+                    "controlled_vocabulary": true,
+                    "required": false,
+                    "example": "V3-V4"
+                    },
+                    "sequencing_platform": {
+                    "type": "string",
+                    "description": "Manufacturer and platform used for quantifying microbial abundance",
+                    "controlled_vocabulary": true,
+                    "required": true,
+                    "example": "Illumina"
+                    }
+                },
+                "statistical_analysis": {
+                    "data_transformation": {
+                    "type": "string",
+                    "description": "Data transformation applied to microbial abundance measurements",
+                    "controlled_vocabulary": true,
+                    "required": false,
+                    "example": "log transformation"
+                    },
+                    "statistical_test": {
+                    "type": "string",
+                    "description": "Statistical test used for differential abundance",
+                    "controlled_vocabulary": true,
+                    "required": true,
+                    "example": "MaAsLin2"
+                    },
+                    "significance_threshold": {
+                    "type": "number",
+                    "description": "p-value or FDR threshold used",
+                    "required": true,
+                    "example": 0.05
+                    },
+                    "mht_correction": {
+                    "type": "boolean",
+                    "description": "Multiple hypothesis testing correction applied",
+                    "required": true,
+                    "example": true
+                    },
+                    "confounders_controlled_for": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Confounding factors accounted for",
+                    "controlled_vocabulary": true,
+                    "required": false,
+                    "example": ["age", "sex", "MMSE", "sequencing platform", "medical history of hypertension"],
+                    "note": "Some values may show validation errors if not in allowed list"
+                    }
+                },
+                "alpha_diversity": {
+                    "pielou": {
+                    "type": "string",
+                    "description": "Pielou evenness index - quantifies how equal the community is numerically",
+                    "enum": ["changed", "unchanged", "increased", "decreased"],
+                    "required": false,
+                    "example": "unchanged"
+                    },
+                    "shannon": {
+                    "type": "string",
+                    "description": "Shannon diversity index - estimator of species richness and evenness",
+                    "enum": ["changed", "unchanged", "increased", "decreased"],
+                    "required": false,
+                    "example": "unchanged"
+                    },
+                    "inverse_simpson": {
+                    "type": "string",
+                    "description": "Inverse Simpson index - modification of Simpson's index",
+                    "enum": ["changed", "unchanged", "increased", "decreased"],
+                    "required": false,
+                    "example": "unchanged"
+                    },
+                    "richness": {
+                    "type": "string",
+                    "description": "Species richness - number of species",
+                    "enum": ["changed", "unchanged", "increased", "decreased"],
+                    "required": false,
+                    "example": "unchanged"
+                    }
+                },
+                "signatures": {
+                    "type": "array",
+                    "description": "One or more signatures per experiment",
+                    "items": {
+                    "type": "object",
+                    "properties": {
+                        "signature_metadata": {
+                        "curated_date": {
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "YYYY/MM/DD",
+                            "description": "Date of signature curation",
+                            "required": true
+                        },
+                        "curator": {
+                            "type": "string",
+                            "description": "Username of curator",
+                            "required": true
+                        },
+                        "revision_editors": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "List of revision editor usernames",
+                            "required": false
+                        },
+                        "source": {
+                            "type": "string",
+                            "description": "Reference to figure/table in the paper",
+                            "required": true,
+                            "example": "Figure 3A and Table S2"
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Description of the signature",
+                            "required": true,
+                            "example": "Differentially abundant genera between the cognitively normal and individuals with MCI..."
+                        },
+                        "abundance_in_group_1": {
+                            "type": "string",
+                            "description": "Direction of abundance change in case group",
+                            "enum": ["increased abundance", "decreased abundance"],
+                            "required": true,
+                            "example": "increased abundance in Mild Cognitive Impairment (MCI)"
+                        }
+                        },
+                        "taxa": {
+                        "type": "array",
+                        "description": "One or more bacterial taxa in this signature",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                            "ncbi_name": {
+                                "type": "string",
+                                "description": "Taxon name with NCBI taxonomy link capability",
+                                "required": true,
+                                "example": "Candidatus Soleaferrea"
+                            },
+                            "quality_control": {
+                                "type": "string",
+                                "description": "Quality control status",
+                                "enum": ["No known issues", "Review needed"],
+                                "required": false,
+                                "example": "No known issues"
+                            },
+                            "links": {
+                                "type": "boolean",
+                                "description": "External links available",
+                                "required": false
+                            }
+                            }
+                        }
+                        }
+                    }
+                    }
+                }
+                }
+            }
+            }
+        },
+        "relationships": {
+            "study_to_experiments": "one-to-many",
+            "experiment_to_signatures": "one-to-many",
+            "signature_to_taxa": "one-to-many"
+        },
+        "notes": [
+            "Many fields use controlled vocabularies from ontologies (Uber Anatomy Ontology, Experimental Factor Ontology)",
+            "Some fields have aliases that map to canonical terms",
+            "Confounders field may show validation errors if values are not in the allowed list",
+            "Quality control flags help identify potential issues with studies",
+            "Each signature represents a set of differentially abundant bacterial taxa",
+            "Taxa can have quality control flags indicating review status"
+        ]
+        }
+
+        
+        
+        """
+    agent = Agent(task=task, llm=llm, verbose=True)
+    await agent.run()
+
+if __name__ == "__main__":
+    asyncio.run(main())
