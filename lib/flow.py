@@ -16,6 +16,7 @@ class outlineModel(TypedDict):
     introduction: Annotated[str, "introduction to the course work"]
     sections: Annotated[List[Section], "list of sections needed to properly answer the coursework question"]
     conclusion: Annotated[str, "conclusion to the course work"]
+    print('shit')
 
 class state(TypedDict):
     study_url : str
