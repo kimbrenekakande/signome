@@ -1,5 +1,12 @@
 # Signome: Microbiome Study Curator
 
+> **Note**
+> 🚧 **Work in Progress**
+>
+> This project is currently under active development. Features and documentation may change as we continue to build and improve the application. We welcome contributions and feedback!
+
+---
+
 A tool for curating and analyzing microbiome studies, with a focus on extracting and processing information from research papers and related documents.
 
 ## Project Overview
@@ -20,13 +27,34 @@ The current implementation is built using Python with the following key componen
 - **playwright**: Browser automation for web scraping
 - **textual**: Terminal UI framework for the application interface
 
-### Node Architecture
+## Workflow Overview
 
-The application is structured around a series of processing nodes, each responsible for a specific task:
+Signome processes microbiome research data through a structured pipeline:
 
-1. **Claw Node**: Handles web scraping and content extraction from research papers and articles
-2. **Convert Node**: Processes and converts extracted data into a structured markdown format
-3. **Embed Node**: Creates vector embeddings of the processed text for semantic search and analysis
+1. **Input**
+
+   - Accepts research paper URLs or documents
+   - Uses Crawl4ai for content extraction
+
+2. **Parallel Processing**
+
+   - **Text Content**: Extracts and processes markdown
+   - **Images**: Generates descriptions via `images.json`
+   - **Documents**: Handles PDFs and ZIP files
+   - **Metadata**: Captures supplementary data
+
+3. **Content Unification**
+
+   - Combines all content into a single markdown format
+   - Processes through Ollama for embeddings
+   - Stores in ChromaDB for efficient retrieval
+
+4. **Analysis**
+   - **Metadata Extraction**: Automatically identifies and extracts key study information
+   - **Signature Detection**: Analyzes content for microbial signatures and patterns
+   - **Experiment Analysis**: Processes experimental data and results
+   - **BugSigDB Integration**: Formats findings for compatibility with BugSigDB
+   - **LLM-Powered Insights**: Applies language models to generate contextual understanding
 
 ### Task Management with Rav
 
