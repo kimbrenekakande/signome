@@ -53,7 +53,7 @@ async def scrape(state):
     )
 
     async with AsyncWebCrawler(config=browser_config) as crawler:
-        result = await crawler.arun(url=state.study_url, config=config)
+        result = await crawler.arun(url=state['study_url'], config=config)
 
         if result.downloaded_files:
             for file_path in result.downloaded_files:
@@ -66,7 +66,7 @@ async def scrape(state):
             md_file = "knowledge/study.md"
             with open(md_file, "w", encoding="utf-8") as f:
                 f.write(result.markdown)
-                state.study_path = md_file
+                state['study_path'] = md_file
 
             # mhtml
             if result.mhtml:
