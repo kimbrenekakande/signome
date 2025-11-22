@@ -1,3 +1,9 @@
+## Your privacy, your choice
+We use essential cookies to make sure the site can function. We also use optional cookies for advertising, personalisation of content, usage analysis, and social media, as well as to allow video information to be shared for both marketing, analytics and editorial purposes.
+By accepting optional cookies, you consent to the processing of your personal data - including transfers to third parties. Some third parties are outside of the European Economic Area, with varying standards of data protection.
+See our privacy policy for more information on the use of your personal data.
+Manage preferences for further information and to change your choices.
+Accept all cookies
 Skip to main content
 Advertisement
 Log in
@@ -318,6 +324,7 @@ Download citation
   * Received: 25 March 2020
   * Accepted: 30 June 2020
   * Published: 15 July 2020
+  * Version of record: 15 July 2020
   * Issue date: September 2020
   * DOI: https://doi.org/10.1007/s10815-020-01878-4
 
@@ -396,7 +403,7 @@ Search
   * Cancel contracts here
 
 
-102.222.235.18
+102.222.234.48
 Not affiliated
 © 2025 Springer Nature
   *[DOI]: Digital Object Identifier

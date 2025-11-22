@@ -3,8 +3,8 @@ import json
 
 def converter(state):
     
-    know = Path('knowledge')
-    study = Path('knowledge/study.md')
+    know = Path('core')
+    study = Path('core/study.md')
     
     for file in know.iterdir():
         if file.suffix == '.json':
@@ -18,6 +18,6 @@ def converter(state):
             print(file.name)
             
         else:
-            pass
+            pass #yet to be implement other file formats
         
     return state

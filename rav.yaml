@@ -1,2 +1,3 @@
 scripts:
-    dev: textual run --dev app.py
+    dev: uvicorn main:app --reload
+    # graph: python lib.graph

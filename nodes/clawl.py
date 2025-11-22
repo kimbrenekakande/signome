@@ -11,17 +11,13 @@ from crawl4ai.content_filter_strategy import PruningContentFilter
 async def scrape(state):
         
     # downloads path
-    knowledge_path = os.path.join(os.getcwd(), "knowledge")
-    os.makedirs(knowledge_path, exist_ok=True)
-
-    # # main input area
-    # core = os.path.join(os.getcwd(), "core")
-    # os.makedirs(core, exist_ok=True)
+    core_path = os.path.join(os.getcwd(), "core")
+    os.makedirs(core_path, exist_ok=True)
 
     browser_config = BrowserConfig(
         # downloadable files
         accept_downloads=True,
-        downloads_path=knowledge_path,
+        downloads_path=core_path,
     )
 
     config = CrawlerRunConfig(
@@ -59,24 +55,18 @@ async def scrape(state):
             for file_path in result.downloaded_files:
                 if file_path.endswith(".zip"):
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(knowledge_path)
+                        zip_ref.extractall(core_path)
 
         if result:
             # markdown
-            md_file = "knowledge/study.md"
+            md_file = "core/study.md"
             with open(md_file, "w", encoding="utf-8") as f:
                 f.write(result.markdown)
                 state['study_path'] = md_file
 
-            # mhtml
-            if result.mhtml:
-                mhtml_file = "advanced.mhtml"
-                with open(mhtml_file, "w", encoding="utf-8") as f:
-                    f.write(result.mhtml)
-
             # media
             if result.media:
-                with open("knowledge/images.json", "w") as f:
+                with open("core/images.json", "w") as f:
                     json.dump(result.media.get("images", []), f)
 
     return state
