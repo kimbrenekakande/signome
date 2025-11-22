@@ -1,18 +1,16 @@
 from pprint import pprint
-import chromadb 
-import uuid
+import chromadb , uuid
 from pathlib import Path
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from models import ollama_ef
+from lib.models import ollama_ef
 
 
 
-def embbed(state):
-    
+def embbed(state):  
     client = chromadb.Client()
     collection = client.get_or_create_collection(name="documents")
 
-    doc_path = Path("study.md").read_text()
+    doc_path = Path("core/study.md").read_text()
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=2024,
         chunk_overlap=256,
@@ -21,7 +19,7 @@ def embbed(state):
     chunks = text_splitter.split_text(doc_path)
 
 
-    def embbedder(chuck):
+    def embbedder(chunk):
         embedd = ollama_ef([chunk])
         return embedd[0][0]
 

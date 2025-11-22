@@ -14,10 +14,6 @@ async def scrape(state):
     core_path = os.path.join(os.getcwd(), "core")
     os.makedirs(core_path, exist_ok=True)
 
-    # # main input area
-    # core = os.path.join(os.getcwd(), "core")
-    # os.makedirs(core, exist_ok=True)
-
     browser_config = BrowserConfig(
         # downloadable files
         accept_downloads=True,
@@ -67,12 +63,6 @@ async def scrape(state):
             with open(md_file, "w", encoding="utf-8") as f:
                 f.write(result.markdown)
                 state['study_path'] = md_file
-
-            # mhtml
-            if result.mhtml:
-                mhtml_file = "advanced.mhtml"
-                with open(mhtml_file, "w", encoding="utf-8") as f:
-                    f.write(result.mhtml)
 
             # media
             if result.media:
