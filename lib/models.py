@@ -9,13 +9,7 @@ model = ChatDeepSeek(
 )
 
 
-# model = ChatGroq(
-#     model="deepseek-chat",
-#     temperature=0,
-# )
-
-
-#Ollama embeddings
+#embeddings
 ollama_ef = OllamaEmbeddingFunction(
     url="http://localhost:11434",
     model_name="nomic-embed-text:latest",

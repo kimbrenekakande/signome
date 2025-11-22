@@ -1,2 +1,3 @@
 scripts:
     dev: uvicorn main:app --reload
+    # graph: python lib.graph

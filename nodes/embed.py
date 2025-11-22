@@ -12,8 +12,6 @@ def embbed(state):
     client = chromadb.Client()
     collection = client.get_or_create_collection(name="documents")
 
-
-
     doc_path = Path("study.md").read_text()
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=2024,
